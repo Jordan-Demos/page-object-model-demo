@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Buy Computer" verbose="1">
+
+    <test name="Buy Simple Computer Test">
+        <classes>
+            <class name="com.tricentis.demowebshop.BuyComputerTest" />
+        </classes>
+    </test>
+</suite>
