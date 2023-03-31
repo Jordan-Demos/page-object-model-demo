@@ -8,8 +8,11 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import pages.MyPage;
+import pages.DeskComputerPage;
+import pages.HomePage;
 
 import java.time.Duration;
 import java.util.List;
@@ -17,17 +20,23 @@ import java.util.Random;
 
 public class BuyComputerTest {
 
-    @Test
-    public void addSimpleComputerToCart() {
+    private WebDriver driver;
+
+    @BeforeMethod
+    public void setup() {
         System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/test/resources/web-drivers/" + "chromedriver.exe");
-
-//        ChromeOptions chromeOptions = new ChromeOptions();
-//        chromeOptions.addArguments("");
-        WebDriver driver = new ChromeDriver();
-
+        driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.get("https://demowebshop.tricentis.com/");
+    }
 
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
+
+    @Test
+    public void addSimpleComputerToCart() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(90));
 
         WebElement registerButton = driver.findElement(By.className("ico-register"));
@@ -76,15 +85,12 @@ public class BuyComputerTest {
             throw new RuntimeException(timeoutException.getMessage());
         }
 
-        Actions actions = new Actions(driver);
-        WebElement computersHeader = driver.findElement(By.xpath("//*[@class='top-menu']//*[contains(@href,'computers')]"));
-        actions.moveToElement(computersHeader).build().perform();
+        HomePage homePage = new HomePage(driver);
+        homePage.hoverOverComputerheader();
+        homePage.clickOverDeskOption();
 
-        WebElement deskComputers = computersHeader.findElement(By.xpath("./following-sibling::ul//*[contains(@href,'desktops')]"));
-        deskComputers.click();
-
-        WebElement simpleComputer = driver.findElement(By.xpath("//*[@data-productid='75']//*[@class='product-title']"));
-        simpleComputer.click();
+        DeskComputerPage deskComputerPage = new DeskComputerPage(driver);
+        deskComputerPage.selectSimpleComputer();
 
         List<WebElement> mandatoryFields = driver.findElements(By.xpath("//*[@class='attributes']//*[contains(@class,'required')]/parent::dt"));
         for (WebElement mandatoryField : mandatoryFields) {
@@ -112,8 +118,5 @@ public class BuyComputerTest {
 
         WebElement barNotification = driver.findElement(By.id("bar-notification"));
         Assert.assertTrue(barNotification.getAttribute("class").contains("success"), "Computer was not added to cart");
-
-        MyPage myPage = new MyPage(driver);
-        myPage.clickOnStart();
     }
 }
