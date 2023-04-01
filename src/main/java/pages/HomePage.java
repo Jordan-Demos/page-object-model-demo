@@ -20,6 +20,12 @@ public class HomePage {
     }
 
     // Methods
+    public void clickOnRegisterButton() {
+        WebElement registerButton = driver.findElement(registerButtonBy);
+        registerButton.click();
+    }
+
+
     public void hoverOverComputerheader() {
         Actions actions = new Actions(driver);
         WebElement computersHeader = driver.findElement(ComputerHeaderBy);
